@@ -13,8 +13,64 @@ class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
-
   bool agreed = false;
+
+  String? validatePassword(String password) {
+    if (password.length < 6) {
+      return 'Password error: must be at least 6 characters long';
+    }
+    if (!RegExp(r'[A-Z]').hasMatch(password)) {
+      return 'Password error: must contain at least one uppercase letter';
+    }
+    if (!RegExp(r'[a-z]').hasMatch(password)) {
+      return 'Password error: must contain at least one lowercase letter';
+    }
+    if (!RegExp(r'[0-9]').hasMatch(password)) {
+      return 'Password error: must contain at least one digit (0-9)';
+    }
+    if (!RegExp(r'[!@#\$&*~%^(),.?":{}|<>]').hasMatch(password)) {
+      return 'Password error: must contain at least one special character';
+    }
+    return null;
+  }
+
+  void handleSignup() {
+    final email = emailController.text.trim();
+    final password = passwordController.text;
+    final phone = phoneController.text.trim();
+
+    if (!agreed) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Please agree to the Terms and Services."),
+          duration: Duration(seconds: 8),
+        ),
+      );
+      return;
+    }
+
+    final passwordError = validatePassword(password);
+    if (passwordError != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(passwordError),
+          duration: const Duration(seconds: 8),
+        ),
+      );
+      return;
+    }
+
+    AuthService.signup(email, password, phone);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("Signup successful"),
+        duration: Duration(seconds: 8),
+      ),
+    );
+
+    Navigator.pushReplacementNamed(context, '/login');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +83,7 @@ class _SignupScreenState extends State<SignupScreen> {
             CustomTextField(controller: emailController, label: "Email"),
             CustomTextField(controller: passwordController, label: "Password", obscureText: true),
             CustomTextField(controller: phoneController, label: "Phone Number"),
+            const SizedBox(height: 12),
             Row(
               children: [
                 Checkbox(
@@ -38,29 +95,17 @@ class _SignupScreenState extends State<SignupScreen> {
                   onTap: () => Navigator.pushNamed(context, '/terms'),
                   child: const Text(
                     "Terms and Services",
-                    style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline),
+                    style: TextStyle(
+                      color: Colors.blue,
+                      decoration: TextDecoration.underline,
+                    ),
                   ),
                 ),
               ],
             ),
+            const SizedBox(height: 12),
             ElevatedButton(
-              onPressed: () {
-                if (!agreed) {
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Please agree to terms.")));
-                  return;
-                }
-
-                AuthService.signup(
-                  emailController.text,
-                  passwordController.text,
-                  phoneController.text,
-                );
-
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Signup successful")),
-                );
-                Navigator.pushReplacementNamed(context, '/login');
-              },
+              onPressed: handleSignup,
               child: const Text("Signup"),
             ),
             TextButton(
@@ -73,5 +118,8 @@ class _SignupScreenState extends State<SignupScreen> {
     );
   }
 }
+
+
+
 
 
