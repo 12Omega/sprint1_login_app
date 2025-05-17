@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'screens/login_screen.dart';
 import 'screens/signup_screen.dart';
 import 'screens/home_screen.dart';
+import 'screens/terms_screen.dart'; // Add this
 
 void main() => runApp(const MyApp());
 
@@ -18,10 +19,12 @@ class MyApp extends StatelessWidget {
         '/login': (context) => const LoginScreen(),
         '/signup': (context) => const SignupScreen(),
         '/home': (context) => const HomeScreen(),
+        '/terms': (context) => const TermsScreen(), // Add this
       },
     );
   }
 }
+
 
 
 

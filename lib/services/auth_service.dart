@@ -1,20 +1,27 @@
 class AuthService {
-  // Predefined users stored in memory
-  static final Map<String, String> _users = {
-    'test@example.com': '123456',  // <-- Preloaded user
-    'admin@demo.com': 'adminpass'  // <-- Another optional user
+  // Store users with phone numbers
+  static final Map<String, Map<String, String>> _users = {
+    'test@example.com': {
+      'password': '123456',
+      'phone': '1234567890',
+    },
   };
 
-  // Sign up method (adds a new user to memory)
-  static void signup(String email, String password) {
-    _users[email] = password;
+  static void signup(String email, String password, String phone) {
+    _users[email] = {
+      'password': password,
+      'phone': phone,
+    };
   }
 
-  // Login method (checks if the email and password match)
-  static bool login(String email, String password) {
-    return _users.containsKey(email) && _users[email] == password;
+  static bool login(String email, String password, String phone) {
+    return _users.containsKey(email) &&
+        _users[email]!['password'] == password &&
+        _users[email]!['phone'] == phone;
   }
 }
+
+
 
 
 

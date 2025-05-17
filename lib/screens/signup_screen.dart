@@ -12,46 +12,62 @@ class SignupScreen extends StatefulWidget {
 class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
+
+  bool agreed = false;
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-
     return Scaffold(
       appBar: AppBar(title: const Text("Signup")),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 500),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+        child: Column(
+          children: [
+            CustomTextField(controller: emailController, label: "Email"),
+            CustomTextField(controller: passwordController, label: "Password", obscureText: true),
+            CustomTextField(controller: phoneController, label: "Phone Number"),
+            Row(
               children: [
-                SizedBox(height: screenHeight * 0.1),
-                CustomTextField(controller: emailController, label: "Email"),
-                const SizedBox(height: 10),
-                CustomTextField(controller: passwordController, label: "Password", obscureText: true),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  child: const Text("Signup"),
-                  onPressed: () {
-                    AuthService.signup(
-                      emailController.text,
-                      passwordController.text,
-                    );
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Signup successful")),
-                    );
-                    Navigator.pushReplacementNamed(context, '/login');
-                  },
+                Checkbox(
+                  value: agreed,
+                  onChanged: (val) => setState(() => agreed = val ?? false),
                 ),
-                TextButton(
-                  onPressed: () => Navigator.pushNamed(context, '/login'),
-                  child: const Text("Already have an account? Login"),
+                const Text("I agree to the "),
+                GestureDetector(
+                  onTap: () => Navigator.pushNamed(context, '/terms'),
+                  child: const Text(
+                    "Terms and Services",
+                    style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline),
+                  ),
                 ),
               ],
             ),
-          ),
+            ElevatedButton(
+              onPressed: () {
+                if (!agreed) {
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Please agree to terms.")));
+                  return;
+                }
+
+                AuthService.signup(
+                  emailController.text,
+                  passwordController.text,
+                  phoneController.text,
+                );
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Signup successful")),
+                );
+                Navigator.pushReplacementNamed(context, '/login');
+              },
+              child: const Text("Signup"),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pushNamed(context, '/login'),
+              child: const Text("Already have an account? Login"),
+            ),
+          ],
         ),
       ),
     );
