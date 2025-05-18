@@ -6,27 +6,22 @@ class ContainerView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.red,
+      appBar: AppBar(title: const Text("Container View")),
       body: Center(
-        child: SafeArea(
-          child: Container(
-            alignment: Alignment.centerRight,
-            color: Colors.black,
-
-            child: Container(
-              height: 200,
-              width: 200,
-              child: const Text("data"),
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.amber,
-                border: Border.all(color: Colors.blueAccent, width: 3),
-              ),
-            ),
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          decoration: BoxDecoration(
+            color: Colors.blue[100],
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: const Text(
+            'This is a styled container view.',
+            style: TextStyle(fontSize: 18, color: Colors.blue),
           ),
         ),
       ),
     );
   }
 }
+
