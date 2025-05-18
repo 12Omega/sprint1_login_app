@@ -11,34 +11,25 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignupScreenState extends State<SignupScreen> {
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  final TextEditingController phoneController = TextEditingController();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  final phoneController = TextEditingController();
+
   bool agreed = false;
   bool isLoading = false;
 
   String? validatePassword(String password) {
-    if (password.length < 6) {
-      return 'Password must be at least 6 characters long';
-    }
-    if (!RegExp(r'[A-Z]').hasMatch(password)) {
-      return 'Password must contain an uppercase letter';
-    }
-    if (!RegExp(r'[a-z]').hasMatch(password)) {
-      return 'Password must contain a lowercase letter';
-    }
-    if (!RegExp(r'[0-9]').hasMatch(password)) {
-      return 'Password must contain a digit';
-    }
-    if (!RegExp(r'[!@#\$&*~%^(),.?":{}|<>]').hasMatch(password)) {
-      return 'Password must contain a special character';
-    }
+    if (password.length < 6) return 'Password must be at least 6 characters long';
+    if (!RegExp(r'[A-Z]').hasMatch(password)) return 'Password must contain an uppercase letter';
+    if (!RegExp(r'[a-z]').hasMatch(password)) return 'Password must contain a lowercase letter';
+    if (!RegExp(r'[0-9]').hasMatch(password)) return 'Password must contain a digit';
+    if (!RegExp(r'[!@#\$&*~%^(),.?":{}|<>]').hasMatch(password)) return 'Password must contain a special character';
     return null;
   }
 
-  void handleSignup() async {
+  Future<void> handleSignup() async {
     final email = emailController.text.trim();
-    final password = passwordController.text;
+    final password = passwordController.text.trim();
     final phone = phoneController.text.trim();
 
     if (!agreed) {
@@ -53,7 +44,7 @@ class _SignupScreenState extends State<SignupScreen> {
     }
 
     setState(() => isLoading = true);
-    await Future.delayed(const Duration(seconds: 2)); // Simulate network delay
+    await Future.delayed(const Duration(milliseconds: 800)); // simulate auth delay
 
     AuthService.signup(email, password, phone);
 
@@ -70,26 +61,33 @@ class _SignupScreenState extends State<SignupScreen> {
       children: [
         Scaffold(
           appBar: AppBar(title: const Text("Sign Up")),
-          body: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+          body: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
+            child: ListView(
               children: [
                 const Text(
                   "Create Account 📝",
-                  style: TextStyle(
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blue,
-                  ),
+                  style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.blue),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 32),
-                CustomTextField(controller: emailController, label: "Email"),
+                const SizedBox(height: 28),
+                CustomTextField(
+                  controller: emailController,
+                  label: "Email",
+                  inputType: TextInputType.emailAddress,
+                ),
                 const SizedBox(height: 16),
-                CustomTextField(controller: passwordController, label: "Password", obscureText: true),
+                CustomTextField(
+                  controller: passwordController,
+                  label: "Password",
+                  obscureText: true,
+                ),
                 const SizedBox(height: 16),
-                CustomTextField(controller: phoneController, label: "Phone Number"),
+                CustomTextField(
+                  controller: phoneController,
+                  label: "Phone Number",
+                  inputType: TextInputType.phone,
+                ),
                 const SizedBox(height: 12),
                 Row(
                   children: [
@@ -102,10 +100,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       onTap: () => Navigator.pushNamed(context, '/terms'),
                       child: const Text(
                         "Terms and Services",
-                        style: TextStyle(
-                          color: Colors.blue,
-                          decoration: TextDecoration.underline,
-                        ),
+                        style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline),
                       ),
                     ),
                   ],
@@ -113,9 +108,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: handleSignup,
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size.fromHeight(50),
-                  ),
+                  style: ElevatedButton.styleFrom(minimumSize: const Size.fromHeight(50)),
                   child: const Text("Sign Up"),
                 ),
                 TextButton(
@@ -127,16 +120,17 @@ class _SignupScreenState extends State<SignupScreen> {
           ),
         ),
         if (isLoading)
-          Container(
-            color: const Color.fromARGB(128, 0, 0, 0),
-            child: const Center(
-              child: CircularProgressIndicator(color: Colors.white),
-            ),
+          const Opacity(
+            opacity: 0.5,
+            child: ModalBarrier(dismissible: false, color: Colors.black),
           ),
+        if (isLoading)
+          const Center(child: CircularProgressIndicator(color: Colors.white)),
       ],
     );
   }
 }
+
 
 
 

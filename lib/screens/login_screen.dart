@@ -3,10 +3,7 @@ import '../services/auth_service.dart';
 import '../widgets/custom_textfield.dart';
 import '../common/my_snackbar.dart';
 
-
-
 class LoginScreen extends StatefulWidget {
-
   const LoginScreen({super.key});
 
   @override
@@ -14,14 +11,14 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  final TextEditingController phoneController = TextEditingController();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  final phoneController = TextEditingController();
 
   bool agreed = false;
   bool isLoading = false;
 
-  void handleLogin() async {
+  Future<void> handleLogin() async {
     final email = emailController.text.trim();
     final password = passwordController.text.trim();
     final phone = phoneController.text.trim();
@@ -32,8 +29,7 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 
     setState(() => isLoading = true);
-
-    await Future.delayed(const Duration(seconds: 2)); // simulate delay
+    await Future.delayed(const Duration(milliseconds: 800));
 
     final success = AuthService.login(email, password, phone);
 
@@ -53,26 +49,33 @@ class _LoginScreenState extends State<LoginScreen> {
       children: [
         Scaffold(
           appBar: AppBar(title: const Text("Login")),
-          body: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+          body: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
+            child: ListView(
               children: [
                 const Text(
                   "Welcome Back 👋",
-                  style: TextStyle(
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.blue,
-                  ),
+                  style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.blue),
                   textAlign: TextAlign.center,
                 ),
-                const SizedBox(height: 32),
-                CustomTextField(controller: emailController, label: "Email"),
+                const SizedBox(height: 28),
+                CustomTextField(
+                  controller: emailController,
+                  label: "Email",
+                  inputType: TextInputType.emailAddress,
+                ),
                 const SizedBox(height: 16),
-                CustomTextField(controller: passwordController, label: "Password", obscureText: true),
+                CustomTextField(
+                  controller: passwordController,
+                  label: "Password",
+                  obscureText: true,
+                ),
                 const SizedBox(height: 16),
-                CustomTextField(controller: phoneController, label: "Phone Number"),
+                CustomTextField(
+                  controller: phoneController,
+                  label: "Phone Number",
+                  inputType: TextInputType.phone,
+                ),
                 const SizedBox(height: 12),
                 Row(
                   children: [
@@ -85,10 +88,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       onTap: () => Navigator.pushNamed(context, '/terms'),
                       child: const Text(
                         "Terms and Services",
-                        style: TextStyle(
-                          color: Colors.blue,
-                          decoration: TextDecoration.underline,
-                        ),
+                        style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline),
                       ),
                     ),
                   ],
@@ -96,9 +96,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: handleLogin,
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: const Size.fromHeight(50),
-                  ),
+                  style: ElevatedButton.styleFrom(minimumSize: const Size.fromHeight(50)),
                   child: const Text("Login"),
                 ),
                 TextButton(
@@ -110,16 +108,17 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
         if (isLoading)
-          Container(
-            color: const Color.fromARGB(128, 0, 0, 0), // 50% black overlay
-            child: const Center(
-              child: CircularProgressIndicator(color: Colors.white),
-            ),
+          const Opacity(
+            opacity: 0.5,
+            child: ModalBarrier(dismissible: false, color: Colors.black),
           ),
+        if (isLoading)
+          const Center(child: CircularProgressIndicator(color: Colors.white)),
       ],
     );
   }
 }
+
 
 
 

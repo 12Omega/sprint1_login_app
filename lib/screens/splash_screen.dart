@@ -11,8 +11,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    // Wait 3 seconds then safely navigate if the widget is still mounted
-    Future.delayed(const Duration(seconds: 3)).then((_) {
+    Future.delayed(const Duration(seconds: 2)).then((_) {
       if (!mounted) return;
       Navigator.pushReplacementNamed(context, '/login');
     });
@@ -26,7 +25,7 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            buildLogo(),
+            _buildLogo(),
             const SizedBox(height: 30),
             const CircularProgressIndicator(color: Colors.white),
           ],
@@ -35,27 +34,23 @@ class _SplashScreenState extends State<SplashScreen> {
     );
   }
 
-  Widget buildLogo() {
+  Widget _buildLogo() {
     return Container(
       width: 120,
       height: 120,
       decoration: const BoxDecoration(
         shape: BoxShape.circle,
-        color: Colors.blue,
+        color: Colors.white,
       ),
       child: Center(
         child: Container(
           width: 70,
           height: 70,
-          color: Colors.white,
+          color: Colors.blue,
           child: const Center(
             child: Text(
               'P',
-              style: TextStyle(
-                fontSize: 40,
-                fontWeight: FontWeight.bold,
-                color: Colors.blue,
-              ),
+              style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold, color: Colors.white),
             ),
           ),
         ),
@@ -63,5 +58,6 @@ class _SplashScreenState extends State<SplashScreen> {
     );
   }
 }
+
 
 
